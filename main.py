@@ -85,22 +85,27 @@ def main():
             
         process_data = export_response.json()
         process_id = process_data.get('processStatusId')
-        entity_id = process_data.get('entityId')
         
         # 2. Wachten tot Bol de lijst klaar heeft
         status = "PENDING"
+        entity_id = None
         pogingen = 0
         while status == "PENDING" and pogingen < 20:
-            time.sleep(15) # Wacht 15 seconden per keer
+            time.sleep(15)
             pogingen += 1
-            status_response = requests.get(f'https://api.bol.com/retailer/process-status/{process_id}', headers=headers_json)
+            # === HIER ZIT DE OPLOSSING: We gebruiken nu /shared/ ipv /retailer/ ===
+            status_response = requests.get(f'https://api.bol.com/shared/process-status/{process_id}', headers=headers_json)
+            
             if status_response.status_code == 200:
-                status = status_response.json().get('status')
+                status_data = status_response.json()
+                status = status_data.get('status')
+                if status == "SUCCESS":
+                    entity_id = status_data.get('entityId')
             else:
                 raise Exception(f"Fout bij controleren status: {status_response.text}")
                 
-        if status != "SUCCESS":
-            raise Exception(f"Bol is te langzaam met de export of faalde. Status: {status}")
+        if status != "SUCCESS" or not entity_id:
+            raise Exception(f"Bol is te langzaam of faalde. Status: {status}")
             
         # 3. Downloaden van de CSV
         headers_csv = {
@@ -117,7 +122,6 @@ def main():
         reader = csv.DictReader(StringIO(csv_data))
         
         for row in reader:
-            # We strippen spaties rondom de kolomnamen voor de zekerheid
             clean_row = {k.strip(): v for k, v in row.items()}
             
             ean = clean_row.get('ean', 'Onbekend')
