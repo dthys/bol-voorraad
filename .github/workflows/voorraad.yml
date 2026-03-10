@@ -2,7 +2,7 @@ name: Check Bol Voorraad
 
 on:
   schedule:
-    - cron: '0 8,12,16 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
