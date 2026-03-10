@@ -29,6 +29,8 @@ jobs:
           BOL_CLIENT_SECRET: ${{ secrets.BOL_CLIENT_SECRET }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
+          JSONBIN_API_KEY: ${{ secrets.JSONBIN_API_KEY }}
         run: python main.py
         
       - name: Bewaar de nieuwe index.html op GitHub
