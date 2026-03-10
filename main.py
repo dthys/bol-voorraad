@@ -37,6 +37,16 @@ def get_jsonbin_data():
         print(f"Error lezen database: {e}")
     return {}
 
+def update_jsonbin_data(data):
+    if not JSONBIN_BIN_ID or not JSONBIN_API_KEY:
+        return
+    url = f"https://api.jsonbin.io/v3/b/{JSONBIN_BIN_ID}"
+    headers = {'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY}
+    try:
+        requests.put(url, headers=headers, json=data)
+    except Exception as e:
+        print(f"Error update database: {e}")
+
 def stuur_waarschuwings_telegram(product_naam, ean, voorraad, min_voorraad):
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
@@ -54,10 +64,10 @@ def genereer_html(resultaten, error_msg=""):
     bin_id_veilig = JSONBIN_BIN_ID if JSONBIN_BIN_ID else "ONTBREEKT"
     api_key_veilig = JSONBIN_API_KEY if JSONBIN_API_KEY else "ONTBREEKT"
 
-    html = f"""<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bol LVB Voorraad</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-4 font-sans antialiased"><div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6"><h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">Voorraad & Instellingen</h1><p class="text-center text-xs text-gray-500 mb-6">Laatste Bol check: {tijd_nu}</p>"""
+    html = f"""<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bol LVB Voorraad</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-4 font-sans antialiased"><div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6"><h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">Voorraad & Instellingen</h1><p class="text-center text-xs text-gray-500 mb-6">Laatste automatische check: {tijd_nu}</p>"""
     
     if bin_id_veilig == "ONTBREEKT":
-        html += """<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4"><p class="font-bold">⚠️ Systeemfout</p><p>De JSONBin sleutels ontbreken! Check je GitHub Secrets.</p></div>"""
+        html += """<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4"><p class="font-bold">⚠️ Systeemfout</p><p>De JSONBin sleutels ontbreken!</p></div>"""
 
     if error_msg:
         html += f"""<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4"><p class="font-bold">Foutmelding</p><p>{error_msg}</p></div>"""
@@ -67,10 +77,22 @@ def genereer_html(resultaten, error_msg=""):
         
         html += '<div class="space-y-4 mb-6">'
         for item in resultaten:
-            is_low = item['status'] == "TE LAAG"
-            bg = "bg-red-50 border-red-200" if is_low else "bg-gray-50 border-gray-200"
-            text_c = "text-red-600" if is_low else "text-green-600"
+            is_low = item['voorraad'] < item['min_voorraad']
+            is_onderweg = item['onderweg']
+            
+            # Kleuren bepalen op basis van de status
+            if is_low and not is_onderweg:
+                bg = "bg-red-50 border-red-200"
+                text_c = "text-red-600"
+            elif is_low and is_onderweg:
+                bg = "bg-orange-50 border-orange-200"
+                text_c = "text-orange-500"
+            else:
+                bg = "bg-gray-50 border-gray-200"
+                text_c = "text-green-600"
+                
             safe_title = item['naam'].replace('"', '&quot;')
+            checked = "checked" if is_onderweg else ""
             
             html += f"""
             <div class="p-4 rounded-lg border {bg}">
@@ -78,13 +100,17 @@ def genereer_html(resultaten, error_msg=""):
                     <h3 class="font-semibold text-gray-800 text-sm">{item['naam']}</h3>
                     <p class="text-xs text-gray-500">EAN: {item['ean']}</p>
                 </div>
-                <div class="flex justify-between items-center bg-white p-2 rounded border">
+                <div class="flex justify-between items-center bg-white p-2 rounded border mb-2">
                     <div class="text-sm text-gray-600 flex items-center">
                         Min: <input type="number" class="voorraad-input ml-2 w-16 p-1 border rounded text-center font-bold" data-ean="{item['ean']}" data-title="{safe_title}" value="{item['min_voorraad']}">
                     </div>
                     <div class="text-right">
                         <span class="block text-xl font-bold {text_c}">{item['voorraad']} <span class="text-xs font-normal text-gray-500">stuks</span></span>
                     </div>
+                </div>
+                <div class="flex items-center bg-white p-2 rounded border border-gray-200">
+                    <input type="checkbox" id="chk_{item['ean']}" class="onderweg-checkbox w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-ean="{item['ean']}" {checked}>
+                    <label for="chk_{item['ean']}" class="ml-2 text-sm text-gray-700 font-medium cursor-pointer">Voorraad verstuurd (Mute melding)</label>
                 </div>
             </div>"""
         html += '</div>'
@@ -105,9 +131,13 @@ def genereer_html(resultaten, error_msg=""):
 
             let newData = {{ "_systeem": "actief" }};
             document.querySelectorAll('.voorraad-input').forEach(input => {{
-                newData[input.getAttribute('data-ean')] = {{ 
+                const ean = input.getAttribute('data-ean');
+                const chk = document.querySelector(`.onderweg-checkbox[data-ean="${{ean}}"]`);
+                
+                newData[ean] = {{ 
                     "titel": input.getAttribute('data-title'), 
-                    "min_voorraad": parseInt(input.value) 
+                    "min_voorraad": parseInt(input.value),
+                    "onderweg": chk ? chk.checked : false
                 }};
             }});
 
@@ -143,13 +173,14 @@ def main():
     error_bericht = ""
     try:
         opgeslagen_instellingen = get_jsonbin_data()
+        needs_db_update = False # Houdt bij of Python iets automatisch moet uitvinken
+        
         token = get_bol_access_token()
         headers_json = {
             'Authorization': f'Bearer {token}',
             'Accept': 'application/vnd.retailer.v10+json'
         }
         
-        # === DE OPLOSSING: Directe API Call naar LVB Inventory ===
         inventory_items = []
         page = 1
         while True:
@@ -168,32 +199,45 @@ def main():
             inventory_items.extend(items)
             page += 1
             
-        # Verwerk de LVB items
         for item in inventory_items:
             ean = item.get('ean', 'Onbekend')
             bol_titel = item.get('title', f"Product EAN: {ean}")
             stock_amount = item.get('regularStock', 0)
             
-            eigen_info = opgeslagen_instellingen.get(ean)
-            if eigen_info:
-                product_naam = eigen_info.get('titel', bol_titel)
-                min_voorraad = int(eigen_info.get('min_voorraad', STANDAARD_MIN_VOORRAAD))
-            else:
-                product_naam = bol_titel
-                min_voorraad = STANDAARD_MIN_VOORRAAD
+            # Haal instellingen op uit de database
+            eigen_info = opgeslagen_instellingen.get(ean, {})
+            product_naam = eigen_info.get('titel', bol_titel)
+            min_voorraad = int(eigen_info.get('min_voorraad', STANDAARD_MIN_VOORRAAD))
+            onderweg = bool(eigen_info.get('onderweg', False))
+            
+            # SLIMME LOGICA: Als het vinkje aan staat, maar de voorraad is weer aangevuld!
+            if stock_amount >= min_voorraad and onderweg:
+                onderweg = False
+                eigen_info['onderweg'] = False
+                needs_db_update = True # Geef door dat Python de database moet updaten
                 
-            status_text = "OK"
+            # Controleer of we Telegram moeten sturen
             if stock_amount < min_voorraad:
-                status_text = "TE LAAG"
-                stuur_waarschuwings_telegram(product_naam, ean, stock_amount, min_voorraad)
+                if not onderweg:
+                    stuur_waarschuwings_telegram(product_naam, ean, stock_amount, min_voorraad)
+                    
+            # Update de data voor in het geheugen
+            eigen_info['titel'] = product_naam
+            eigen_info['min_voorraad'] = min_voorraad
+            eigen_info['onderweg'] = onderweg
+            opgeslagen_instellingen[ean] = eigen_info
                 
             resultaten.append({
                 'ean': ean,
                 'naam': product_naam,
                 'voorraad': stock_amount,
                 'min_voorraad': min_voorraad,
-                'status': status_text
+                'onderweg': onderweg
             })
+            
+        # Als het script automatisch een vinkje heeft weggehaald, schrijven we dit terug naar de database!
+        if needs_db_update:
+            update_jsonbin_data(opgeslagen_instellingen)
             
     except Exception as e:
         error_bericht = str(e)
