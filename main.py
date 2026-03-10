@@ -1,8 +1,5 @@
 import os
 import requests
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from base64 import b64encode
 from datetime import datetime
 import time
@@ -12,9 +9,8 @@ from io import StringIO
 # ================= CONFIGURATIE VIA GITHUB SECRETS =================
 BOL_CLIENT_ID = os.environ.get('BOL_CLIENT_ID')
 BOL_CLIENT_SECRET = os.environ.get('BOL_CLIENT_SECRET')
-EMAIL_SENDER = os.environ.get('EMAIL_SENDER')
-EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
-EMAIL_RECEIVER = os.environ.get('EMAIL_RECEIVER')
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 MINIMUM_VOORRAAD = 5
 # ===================================================================
@@ -31,22 +27,27 @@ def get_bol_access_token():
         raise Exception(f"Fout bij Bol authenticatie: {response.text}")
     return response.json()['access_token']
 
-def stuur_waarschuwings_mail(product_naam, ean, voorraad):
-    msg = MIMEMultipart()
-    msg['From'] = EMAIL_SENDER
-    msg['To'] = EMAIL_RECEIVER
-    msg['Subject'] = f"Actie Vereist: Voorraad te laag voor {product_naam}"
-    body = f"Beste beheerder,\n\nDit product is onder de minimum voorraad gekomen:\n\nProduct: {product_naam}\nEAN: {ean}\nHuidige voorraad: {voorraad}\n\nGroeten,\nJe GitHub Automatisering"
-    msg.attach(MIMEText(body, 'plain'))
+def stuur_waarschuwings_telegram(product_naam, ean, voorraad):
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram gegevens ontbreken. Kan geen bericht sturen.")
+        return
+
+    bericht = f"🚨 *Voorraad Waarschuwing!*\n\nDit product moet bijbesteld worden:\n📦 *Product:* {product_naam}\n🔖 *EAN:* {ean}\n📉 *Huidige voorraad:* {voorraad}"
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": bericht,
+        "parse_mode": "Markdown"
+    }
+    
     try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, EMAIL_RECEIVER, msg.as_string())
-        server.quit()
-        print(f"Mail verstuurd voor {product_naam}")
+        response = requests.post(url, json=payload)
+        if response.status_code == 200:
+            print(f"Telegram bericht verstuurd voor {product_naam}")
+        else:
+            print(f"Fout bij versturen Telegram: {response.text}")
     except Exception as e:
-        print(f"Kon e-mail niet versturen: {e}")
+        print(f"Fout bij sturen Telegram: {e}")
 
 def genereer_html(resultaten, error_msg=""):
     tijd_nu = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
@@ -93,7 +94,6 @@ def main():
         while status == "PENDING" and pogingen < 20:
             time.sleep(15)
             pogingen += 1
-            # === HIER ZIT DE OPLOSSING: We gebruiken nu /shared/ ipv /retailer/ ===
             status_response = requests.get(f'https://api.bol.com/shared/process-status/{process_id}', headers=headers_json)
             
             if status_response.status_code == 200:
@@ -137,7 +137,7 @@ def main():
             status_text = "OK"
             if stock_amount < MINIMUM_VOORRAAD:
                 status_text = "TE LAAG"
-                stuur_waarschuwings_mail(product_naam, ean, stock_amount)
+                stuur_waarschuwings_telegram(product_naam, ean, stock_amount)
                 
             resultaten.append({
                 'ean': ean,
