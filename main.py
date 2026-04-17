@@ -64,7 +64,6 @@ def genereer_html(resultaten, error_msg=""):
     bin_id_veilig = JSONBIN_BIN_ID if JSONBIN_BIN_ID else "ONTBREEKT"
     api_key_veilig = JSONBIN_API_KEY if JSONBIN_API_KEY else "ONTBREEKT"
 
-    # Algemene pagina padding verkleind (p-4 -> p-2, p-6 -> p-3)
     html = f"""<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bol LVB Voorraad</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-2 font-sans antialiased"><div class="max-w-md mx-auto bg-white rounded shadow-md overflow-hidden p-3"><h1 class="text-xl font-bold text-gray-800 mb-1 text-center">Voorraad & Instellingen</h1><p class="text-center text-[10px] text-gray-500 mb-3">Laatste check: {tijd_nu}</p>"""
     
     if bin_id_veilig == "ONTBREEKT":
@@ -75,14 +74,28 @@ def genereer_html(resultaten, error_msg=""):
     else:
         if len(resultaten) == 0:
             html += """<div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-3 mb-3 text-sm"><p class="font-bold">Geen LVB Voorraad</p><p>Geen producten in het LVB magazijn.</p></div>"""
+        else:
+            # Zoekbalk en Dropdown menu gecombineerd in één sectie
+            html += """
+            <div class="mb-4 space-y-2">
+                <input type="text" id="searchInput" oninput="filterProducten()" placeholder="🔍 Zoek op titel of EAN..." class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <select id="sortSelect" onchange="sorteerProducten()" class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="standaard">Sorteer: Standaard</option>
+                    <option value="actie_vereist">📌 Actie vereist eerst</option>
+                    <option value="voorraad_laag">📉 Voorraad: Laag naar Hoog</option>
+                    <option value="voorraad_hoog">📈 Voorraad: Hoog naar Laag</option>
+                </select>
+            </div>
+            """
         
-        # Ruimte tussen blokken verkleind (space-y-4 -> space-y-2)
-        html += '<div class="space-y-2 mb-4">'
-        for item in resultaten:
+        html += '<div id="product-list" class="space-y-2 mb-4">'
+        
+        for index, item in enumerate(resultaten):
             is_low = item['voorraad'] < item['min_voorraad']
             is_onderweg = item['onderweg']
             
-            # Kleuren (iets subtielere randen voor een strakkere look)
+            actie_nodig = "true" if (is_low and not is_onderweg) else "false"
+            
             if is_low and not is_onderweg:
                 bg = "bg-red-50 border-red-300"
                 text_c = "text-red-600"
@@ -96,9 +109,9 @@ def genereer_html(resultaten, error_msg=""):
             safe_title = item['naam'].replace('"', '&quot;')
             checked = "checked" if is_onderweg else ""
             
-            # Nieuwe compacte layout per item
+            # data-ean en data-titel toegevoegd aan de buitenste div voor de live search
             html += f"""
-            <div class="p-2 rounded border {bg}">
+            <div class="product-item p-2 rounded border {bg}" data-index="{index}" data-voorraad="{item['voorraad']}" data-actie="{actie_nodig}" data-ean="{item['ean']}" data-titel="{safe_title}">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="{safe_title}">{item['naam']}</h3>
@@ -120,12 +133,56 @@ def genereer_html(resultaten, error_msg=""):
             </div>"""
         html += '</div>'
         
-        # Knop iets compacter gemaakt (py-3 -> py-2)
         html += f"""
         <button id="saveBtn" onclick="saveAll()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 shadow-md text-sm">
             Instellingen Opslaan
         </button>
+        
         <script>
+        // --- Live Zoeken Logica ---
+        function filterProducten() {{
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.product-item');
+
+            items.forEach(item => {{
+                const titel = item.getAttribute('data-titel').toLowerCase();
+                const ean = item.getAttribute('data-ean').toLowerCase();
+
+                if (titel.includes(query) || ean.includes(query)) {{
+                    item.style.display = ''; // Toon item als het overeenkomt
+                }} else {{
+                    item.style.display = 'none'; // Verberg item als het niet overeenkomt
+                }}
+            }});
+        }}
+
+        // --- Sorteer Logica ---
+        function sorteerProducten() {{
+            const list = document.getElementById('product-list');
+            const items = Array.from(list.getElementsByClassName('product-item'));
+            const sortType = document.getElementById('sortSelect').value;
+
+            items.sort((a, b) => {{
+                const indexA = parseInt(a.getAttribute('data-index'));
+                const indexB = parseInt(b.getAttribute('data-index'));
+                const voorraadA = parseInt(a.getAttribute('data-voorraad'));
+                const voorraadB = parseInt(b.getAttribute('data-voorraad'));
+                const actieA = a.getAttribute('data-actie') === 'true' ? 1 : 0;
+                const actieB = b.getAttribute('data-actie') === 'true' ? 1 : 0;
+
+                if (sortType === 'voorraad_laag') return voorraadA - voorraadB;
+                if (sortType === 'voorraad_hoog') return voorraadB - voorraadA;
+                if (sortType === 'actie_vereist') {{
+                    if (actieA !== actieB) return actieB - actieA;
+                    return voorraadA - voorraadB;
+                }}
+                return indexA - indexB;
+            }});
+
+            items.forEach(item => list.appendChild(item));
+        }}
+
+        // --- Opslaan Logica ---
         async function saveAll() {{
             const btn = document.getElementById('saveBtn');
             const binId = '{bin_id_veilig}';
