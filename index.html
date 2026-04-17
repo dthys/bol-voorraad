@@ -1,5 +1,15 @@
-<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bol LVB Voorraad</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-2 font-sans antialiased"><div class="max-w-md mx-auto bg-white rounded shadow-md overflow-hidden p-3"><h1 class="text-xl font-bold text-gray-800 mb-1 text-center">Voorraad & Instellingen</h1><p class="text-center text-[10px] text-gray-500 mb-3">Laatste check: 17-04-2026 10:46:00</p><div class="space-y-2 mb-4">
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bol LVB Voorraad</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-2 font-sans antialiased"><div class="max-w-md mx-auto bg-white rounded shadow-md overflow-hidden p-3"><h1 class="text-xl font-bold text-gray-800 mb-1 text-center">Voorraad & Instellingen</h1><p class="text-center text-[10px] text-gray-500 mb-3">Laatste check: 17-04-2026 10:52:52</p>
+            <div class="mb-4 space-y-2">
+                <input type="text" id="searchInput" oninput="filterProducten()" placeholder="🔍 Zoek op titel of EAN..." class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <select id="sortSelect" onchange="sorteerProducten()" class="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-700 shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="standaard">Sorteer: Standaard</option>
+                    <option value="actie_vereist">📌 Actie vereist eerst</option>
+                    <option value="voorraad_laag">📉 Voorraad: Laag naar Hoog</option>
+                    <option value="voorraad_hoog">📈 Voorraad: Hoog naar Laag</option>
+                </select>
+            </div>
+            <div id="product-list" class="space-y-2 mb-4">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="0" data-voorraad="38" data-actie="false" data-ean="5430004400097" data-titel="Olivivo Fietshaak Ophangsysteem - fiets muurbeugel draaibaar - ophangbeugel - Muurbeugel - Muurhaak - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo Fietshaak Ophangsysteem - fiets muurbeugel draaibaar - ophangbeugel - Muurbeugel - Muurhaak - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend">Olivivo Fietshaak Ophangsysteem - fiets muurbeugel draaibaar - ophangbeugel - Muurbeugel - Muurhaak - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend</h3>
@@ -19,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="1" data-voorraad="5" data-actie="false" data-ean="5430004400028" data-titel="Olivivo® Muismat Wereldkaart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Wereldkaart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Wereldkaart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -39,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="2" data-voorraad="42" data-actie="false" data-ean="5430004400011" data-titel="Olivivo® Fiets ophangsysteem - kliksysteem - ophangbeugel - Muurbeugel - Muurhaak - Muurbevestiging - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Fiets ophangsysteem - kliksysteem - ophangbeugel - Muurbeugel - Muurhaak - Muurbevestiging - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend">Olivivo® Fiets ophangsysteem - kliksysteem - ophangbeugel - Muurbeugel - Muurhaak - Muurbevestiging - Wandhouder - Fietshaak - fietsrek - fiets haak - fiets ophangbeugel - Fiets muurbeugel - WallMount - Racefiets & Mountainbike - Ruimtebesparend</h3>
@@ -59,7 +69,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="3" data-voorraad="20" data-actie="false" data-ean="5430004400042" data-titel="Olivivo® Muismat Heelal - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Heelal - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Heelal - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -79,7 +89,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="4" data-voorraad="0" data-actie="false" data-ean="5430004400059" data-titel="Olivivo® | Muismat | Gaming Mousepad XXL | Onderlegger | Grote Muismat | 90x40 CM | Zwart&Groen">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® | Muismat | Gaming Mousepad XXL | Onderlegger | Grote Muismat | 90x40 CM | Zwart&Groen">Olivivo® | Muismat | Gaming Mousepad XXL | Onderlegger | Grote Muismat | 90x40 CM | Zwart&Groen</h3>
@@ -99,7 +109,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="5" data-voorraad="24" data-actie="false" data-ean="5430004400035" data-titel="Olivivo® Muismat Grote Golf- Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Grote Golf- Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Grote Golf- Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -119,7 +129,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="6" data-voorraad="0" data-actie="false" data-ean="5430004400066" data-titel="Olivivo® Muismat Melkweg - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Melkweg - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Melkweg - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -139,7 +149,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="7" data-voorraad="42" data-actie="false" data-ean="5430004400103" data-titel="Olivivo® Muismat Excellent - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Excellent - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Excellent - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -159,7 +169,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="8" data-voorraad="0" data-actie="false" data-ean="5904463314504" data-titel="Muismat Gaming XXL - Zwart - 89x40cm - Anti Slip - Grote Muismat Voor Toetsenbord">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Muismat Gaming XXL - Zwart - 89x40cm - Anti Slip - Grote Muismat Voor Toetsenbord">Muismat Gaming XXL - Zwart - 89x40cm - Anti Slip - Grote Muismat Voor Toetsenbord</h3>
@@ -179,7 +189,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-gray-50 border-gray-200">
+            <div class="product-item p-2 rounded border bg-gray-50 border-gray-200" data-index="9" data-voorraad="49" data-actie="false" data-ean="5430004400165" data-titel="Olivivo® Muismat Zwart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo® Muismat Zwart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat">Olivivo® Muismat Zwart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat</h3>
@@ -191,7 +201,7 @@
                 </div>
                 <div class="flex justify-between items-center bg-white p-1 rounded border">
                     <div class="text-xs text-gray-600 flex items-center">
-                        Min: <input type="number" class="voorraad-input ml-1 w-12 p-0.5 border rounded text-center font-bold text-xs" data-ean="5430004400165" data-title="Olivivo® Muismat Zwart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat" value="30">
+                        Min: <input type="number" class="voorraad-input ml-1 w-12 p-0.5 border rounded text-center font-bold text-xs" data-ean="5430004400165" data-title="Olivivo® Muismat Zwart - Gaming Mousepad XXL - Onderlegger - Grote Muismat - 90x40 CM - Bureaulegger - Toetsenbord - Anti Slip - Waterproof - Desktop mat" value="35">
                     </div>
                     <div class="flex items-center">
                         <input type="checkbox" id="chk_5430004400165" class="onderweg-checkbox w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500" data-ean="5430004400165" >
@@ -199,7 +209,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="10" data-voorraad="0" data-actie="false" data-ean="5430004400141" data-titel="Olivivo - Badmat - Rood - 50x80cm - Wasbaar - Antislip">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo - Badmat - Rood - 50x80cm - Wasbaar - Antislip">Olivivo - Badmat - Rood - 50x80cm - Wasbaar - Antislip</h3>
@@ -219,7 +229,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="11" data-voorraad="0" data-actie="false" data-ean="5430004400080" data-titel="Olivivo - Badmat - Lichtgrijs - 50x80cm - Wasbaar - Antislip">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo - Badmat - Lichtgrijs - 50x80cm - Wasbaar - Antislip">Olivivo - Badmat - Lichtgrijs - 50x80cm - Wasbaar - Antislip</h3>
@@ -239,7 +249,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="12" data-voorraad="0" data-actie="false" data-ean="5430004400110" data-titel="Olivivo - Badmat - Navy - 50x80cm - Wasbaar - Antislip">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo - Badmat - Navy - 50x80cm - Wasbaar - Antislip">Olivivo - Badmat - Navy - 50x80cm - Wasbaar - Antislip</h3>
@@ -259,7 +269,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2 rounded border bg-orange-50 border-orange-300">
+            <div class="product-item p-2 rounded border bg-orange-50 border-orange-300" data-index="13" data-voorraad="0" data-actie="false" data-ean="5430004400158" data-titel="Olivivo - Badmat - Beige - 50x80cm - Wasbaar - Antislip">
                 <div class="flex justify-between items-start mb-1">
                     <div class="flex-1 min-w-0 pr-2">
                         <h3 class="font-bold text-gray-800 text-xs truncate" title="Olivivo - Badmat - Beige - 50x80cm - Wasbaar - Antislip">Olivivo - Badmat - Beige - 50x80cm - Wasbaar - Antislip</h3>
@@ -282,7 +292,52 @@
         <button id="saveBtn" onclick="saveAll()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 shadow-md text-sm">
             Instellingen Opslaan
         </button>
+        
         <script>
+        // --- Live Zoeken Logica ---
+        function filterProducten() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.product-item');
+
+            items.forEach(item => {
+                const titel = item.getAttribute('data-titel').toLowerCase();
+                const ean = item.getAttribute('data-ean').toLowerCase();
+
+                if (titel.includes(query) || ean.includes(query)) {
+                    item.style.display = ''; // Toon item als het overeenkomt
+                } else {
+                    item.style.display = 'none'; // Verberg item als het niet overeenkomt
+                }
+            });
+        }
+
+        // --- Sorteer Logica ---
+        function sorteerProducten() {
+            const list = document.getElementById('product-list');
+            const items = Array.from(list.getElementsByClassName('product-item'));
+            const sortType = document.getElementById('sortSelect').value;
+
+            items.sort((a, b) => {
+                const indexA = parseInt(a.getAttribute('data-index'));
+                const indexB = parseInt(b.getAttribute('data-index'));
+                const voorraadA = parseInt(a.getAttribute('data-voorraad'));
+                const voorraadB = parseInt(b.getAttribute('data-voorraad'));
+                const actieA = a.getAttribute('data-actie') === 'true' ? 1 : 0;
+                const actieB = b.getAttribute('data-actie') === 'true' ? 1 : 0;
+
+                if (sortType === 'voorraad_laag') return voorraadA - voorraadB;
+                if (sortType === 'voorraad_hoog') return voorraadB - voorraadA;
+                if (sortType === 'actie_vereist') {
+                    if (actieA !== actieB) return actieB - actieA;
+                    return voorraadA - voorraadB;
+                }
+                return indexA - indexB;
+            });
+
+            items.forEach(item => list.appendChild(item));
+        }
+
+        // --- Opslaan Logica ---
         async function saveAll() {
             const btn = document.getElementById('saveBtn');
             const binId = '69b0245db9c05c7732af5647';
